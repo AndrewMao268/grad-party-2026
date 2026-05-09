@@ -1,0 +1,338 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0;}
+  .app{display:grid;grid-template-columns:1fr 1fr;min-height:720px;}
+  .editor{background:var(--color-background-secondary);border-right:.5px solid var(--color-border-tertiary);padding:1.25rem;overflow-y:auto;max-height:720px;}
+  .preview-panel{padding:1.25rem;display:flex;flex-direction:column;gap:1rem;overflow-y:auto;max-height:720px;}
+  .tab-row{display:flex;gap:0;border-bottom:.5px solid var(--color-border-tertiary);margin-bottom:1.25rem;}
+  .tab{padding:7px 12px;font-size:12px;cursor:pointer;border-bottom:2px solid transparent;color:var(--color-text-secondary);margin-bottom:-.5px;}
+  .tab.active{color:var(--color-text-primary);border-bottom-color:var(--color-text-primary);font-weight:500;}
+  .section{margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:.5px solid var(--color-border-tertiary);}
+  .section:last-child{border-bottom:none;}
+  .section-label{font-size:11px;font-weight:500;color:var(--color-text-secondary);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.75rem;}
+  label{font-size:12px;color:var(--color-text-secondary);display:block;margin-bottom:3px;}
+  input[type=text],input[type=date],input[type=time],input[type=color],textarea,select{width:100%;font-size:13px;padding:5px 9px;border-radius:var(--border-radius-md);border:.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-family:inherit;}
+  textarea{resize:vertical;min-height:50px;}
+  .field{margin-bottom:8px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .grad-tabs{display:flex;gap:4px;margin-bottom:10px;}
+  .grad-tab{padding:5px 10px;font-size:12px;border-radius:var(--border-radius-md);border:.5px solid var(--color-border-secondary);background:var(--color-background-primary);cursor:pointer;color:var(--color-text-secondary);transition:all .15s;}
+  .grad-tab.active{background:var(--color-text-primary);color:var(--color-background-primary);border-color:var(--color-text-primary);}
+  .photo-upload{border:1.5px dashed var(--color-border-secondary);border-radius:var(--border-radius-md);padding:.75rem;text-align:center;cursor:pointer;background:var(--color-background-primary);}
+  .photo-upload p{font-size:11px;color:var(--color-text-tertiary);margin-top:3px;}
+  .photo-thumbs{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;}
+  .thumb{width:44px;height:44px;border-radius:var(--border-radius-md);object-fit:cover;border:.5px solid var(--color-border-tertiary);}
+  .thumb-x{cursor:pointer;position:relative;}
+  .color-row{display:flex;gap:8px;align-items:center;}
+  .color-row input[type=color]{width:32px;height:32px;padding:2px;cursor:pointer;border-radius:50%;}
+  .color-row span{font-size:12px;color:var(--color-text-secondary);}
+  .invite-preview{border-radius:var(--border-radius-lg);border:.5px solid var(--color-border-tertiary);overflow:hidden;}
+  .invite-inner{padding:1.5rem 1.25rem;text-align:center;min-height:400px;display:flex;flex-direction:column;align-items:center;gap:.6rem;}
+  .invite-tagline{font-size:10px;letter-spacing:.15em;text-transform:uppercase;opacity:.65;}
+  .invite-names{font-family:'Playfair Display',serif;font-size:22px;line-height:1.25;}
+  .invite-schools{font-size:11px;opacity:.65;line-height:1.8;}
+  .invite-divider{width:40px;height:1px;margin:0 auto;opacity:.35;}
+  .invite-details{font-size:12px;line-height:2;}
+  .invite-msg{font-family:'Playfair Display',serif;font-style:italic;font-size:13px;opacity:.8;}
+  .photos-grid{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;}
+  .rsvp-preview{background:var(--color-background-primary);border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem;}
+  .rsvp-preview h3{font-size:13px;font-weight:500;margin-bottom:.75rem;}
+  .rsvp-field{margin-bottom:8px;}
+  .rsvp-field label{font-size:11px;color:var(--color-text-secondary);margin-bottom:3px;display:block;}
+  .rsvp-choices{display:flex;gap:5px;}
+  .rsvp-choice{flex:1;padding:6px 8px;font-size:11px;border-radius:var(--border-radius-md);border:.5px solid var(--color-border-secondary);background:var(--color-background-secondary);cursor:pointer;text-align:center;}
+  .rsvp-btn{width:100%;padding:9px;border-radius:var(--border-radius-md);font-size:13px;font-weight:500;cursor:pointer;border:none;margin-top:.5rem;font-family:inherit;}
+  .export-row{display:flex;gap:8px;}
+  .export-btn{flex:1;padding:8px;font-size:12px;font-weight:500;border-radius:var(--border-radius-md);border:.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);cursor:pointer;font-family:inherit;}
+  .toast{position:fixed;bottom:14px;right:14px;background:var(--color-background-success);color:var(--color-text-success);padding:8px 14px;border-radius:var(--border-radius-md);font-size:12px;font-weight:500;display:none;z-index:99;}
+</style>
+
+<h2 class="sr-only">Graduation party invite builder for four graduates — customize each graduate, upload photos, style the invite, and preview the RSVP form.</h2>
+
+<div class="app">
+  <div class="editor">
+    <div class="tab-row">
+      <div class="tab active" onclick="switchTab('invite')">Invite</div>
+      <div class="tab" onclick="switchTab('rsvp')">RSVP</div>
+      <div class="tab" onclick="switchTab('style')">Style</div>
+    </div>
+
+    <div id="tab-invite">
+      <div class="section">
+        <div class="section-label">Graduates</div>
+        <div class="grad-tabs">
+          <div class="grad-tab active" onclick="switchGrad(0)">Grad 1</div>
+          <div class="grad-tab" onclick="switchGrad(1)">Grad 2</div>
+          <div class="grad-tab" onclick="switchGrad(2)">Grad 3</div>
+          <div class="grad-tab" onclick="switchGrad(3)">Grad 4</div>
+        </div>
+        <div id="grad-panels">
+          <!-- generated by JS -->
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-label">Party details</div>
+        <div class="row2">
+          <div class="field"><label>Date</label><input type="date" id="party-date" value="2025-06-15" oninput="update()"></div>
+          <div class="field"><label>Time</label><input type="time" id="party-time" value="13:00" oninput="update()"></div>
+        </div>
+        <div class="field"><label>Venue</label><input type="text" id="party-venue" value="The Family Backyard" oninput="update()"></div>
+        <div class="field"><label>Address</label><input type="text" id="party-addr" value="123 Maple St, Cincinnati, OH" oninput="update()"></div>
+        <div class="field"><label>Message</label><textarea id="party-msg" oninput="update()">Join us as we celebrate four incredible milestones!</textarea></div>
+      </div>
+    </div>
+
+    <div id="tab-rsvp" style="display:none">
+      <div class="section">
+        <div class="section-label">RSVP fields</div>
+        <div class="field"><label>Dietary restrictions?</label><select id="rsvp-dietary" onchange="update()"><option value="yes">Yes</option><option value="no">No</option></select></div>
+        <div class="field"><label>Ask for +1 / extra guests?</label><select id="rsvp-guests" onchange="update()"><option value="yes">Yes</option><option value="no">No</option></select></div>
+        <div class="field"><label>Which graduate are you closest to?</label><select id="rsvp-grad-q" onchange="update()"><option value="yes">Yes, show this</option><option value="no">No</option></select></div>
+        <div class="field"><label>Custom question (optional)</label><input type="text" id="rsvp-custom" placeholder="e.g. Favourite memory?" oninput="update()"></div>
+        <div class="field"><label>RSVP deadline</label><input type="date" id="rsvp-deadline" value="2025-06-01" oninput="update()"></div>
+        <div class="field"><label>Contact email</label><input type="text" id="rsvp-email" value="party@example.com" oninput="update()"></div>
+      </div>
+    </div>
+
+    <div id="tab-style" style="display:none">
+      <div class="section">
+        <div class="section-label">Palette</div>
+        <div class="field"><select id="theme-preset" onchange="applyPreset(this.value)">
+          <option value="gold">Classic gold & navy</option>
+          <option value="rose">Rose & blush</option>
+          <option value="sage">Sage & cream</option>
+          <option value="midnight">Midnight blue</option>
+          <option value="custom">Custom…</option>
+        </select></div>
+        <div class="field"><div class="color-row"><input type="color" id="col-bg" value="#1a2744" oninput="update()"><span>Background</span></div></div>
+        <div class="field"><div class="color-row"><input type="color" id="col-text" value="#C9A84C" oninput="update()"><span>Accent / headings</span></div></div>
+        <div class="field"><div class="color-row"><input type="color" id="col-body" value="#F5E6C0" oninput="update()"><span>Body text</span></div></div>
+      </div>
+      <div class="section">
+        <div class="section-label">Photo layout</div>
+        <select id="photo-layout" onchange="update()">
+          <option value="circles">Circles row</option>
+          <option value="squares">Square grid</option>
+          <option value="strip">Tall strips</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="preview-panel">
+    <div class="invite-preview" id="invite-card">
+      <div class="invite-inner" id="invite-inner">
+        <div class="photos-grid" id="invite-photos"></div>
+        <p class="invite-tagline" id="prev-tagline">You're invited to celebrate</p>
+        <p class="invite-names" id="prev-names"></p>
+        <p class="invite-schools" id="prev-schools"></p>
+        <div class="invite-divider" id="prev-divider"></div>
+        <p class="invite-details" id="prev-details"></p>
+        <p class="invite-msg" id="prev-msg"></p>
+        <p style="font-size:10px;opacity:.4;margin-top:.5rem" id="prev-rsvp-note"></p>
+      </div>
+    </div>
+
+    <div class="rsvp-preview">
+      <h3>RSVP</h3>
+      <div class="rsvp-field"><label>Your name</label><input type="text" placeholder="Full name" style="font-size:12px"></div>
+      <div class="rsvp-field">
+        <label>Will you attend?</label>
+        <div class="rsvp-choices">
+          <div class="rsvp-choice" id="rc-yes" onclick="pickRsvp('yes')" style="font-weight:500">Yes!</div>
+          <div class="rsvp-choice" id="rc-no" onclick="pickRsvp('no')">Can't make it</div>
+        </div>
+      </div>
+      <div class="rsvp-field" id="rsvp-grad-field"><label>Which graduate are you closest to?</label>
+        <select style="font-size:12px" id="rsvp-grad-select"><option>Loading…</option></select>
+      </div>
+      <div class="rsvp-field" id="rsvp-dietary-field"><label>Dietary restrictions</label><input type="text" placeholder="e.g. vegetarian" style="font-size:12px"></div>
+      <div class="rsvp-field" id="rsvp-guests-field"><label>Guests (incl. yourself)</label><input type="number" min="1" max="10" value="1" style="font-size:12px"></div>
+      <div class="rsvp-field" id="rsvp-custom-field" style="display:none"><label id="rsvp-custom-label">Custom question</label><textarea rows="2" style="font-size:12px"></textarea></div>
+      <button class="rsvp-btn" id="rsvp-btn" onclick="submitRSVP()">Send RSVP</button>
+    </div>
+
+    <div class="export-row">
+      <button class="export-btn" onclick="copyHTML()"><i class="ti ti-copy" aria-hidden="true"></i> Copy HTML</button>
+      <button class="export-btn" onclick="sendPrompt('Can you help me deploy this four-graduate invite as a real shareable website?')">Deploy website ↗</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast">✓ Done!</div>
+
+<script>
+const grads = [
+  {name:'Alex Smith', year:'Class of 2025', school:'UC · Engineering', photos:[]},
+  {name:'Jordan Lee', year:'Class of 2025', school:'Miami U · Business', photos:[]},
+  {name:'Taylor Kim', year:'Class of 2025', school:'Ohio State · Arts', photos:[]},
+  {name:'Morgan Davis', year:'Class of 2025', school:'Xavier · Nursing', photos:[]},
+];
+let activeGrad = 0;
+
+const presets = {
+  gold:{bg:'#1a2744',text:'#C9A84C',body:'#F5E6C0'},
+  rose:{bg:'#f9eef2',text:'#c2547a',body:'#5a2d42'},
+  sage:{bg:'#f4f6f0',text:'#4a7c59',body:'#2d4a38'},
+  midnight:{bg:'#0d1b2a',text:'#7eb8f7',body:'#cde4ff'},
+};
+
+function buildGradPanels() {
+  const container = document.getElementById('grad-panels');
+  container.innerHTML = '';
+  grads.forEach((g,i) => {
+    const d = document.createElement('div');
+    d.id = 'grad-panel-'+i;
+    d.style.display = i===0?'':'none';
+    d.innerHTML = `
+      <div class="field"><label>Name</label><input type="text" id="g${i}-name" value="${g.name}" oninput="syncGrad(${i})"></div>
+      <div class="row2">
+        <div class="field"><label>Class year</label><input type="text" id="g${i}-year" value="${g.year}" oninput="syncGrad(${i})"></div>
+        <div class="field"><label>School / degree</label><input type="text" id="g${i}-school" value="${g.school}" oninput="syncGrad(${i})"></div>
+      </div>
+      <div class="field">
+        <label>Photo</label>
+        <div class="photo-upload" onclick="document.getElementById('photo-input-${i}').click()">
+          <i class="ti ti-camera" style="font-size:18px;color:var(--color-text-tertiary)" aria-hidden="true"></i>
+          <p>Upload photo for ${g.name.split(' ')[0]}</p>
+          <input type="file" id="photo-input-${i}" data-idx="${i}" accept="image/*" style="display:none" onchange="handlePhoto(this)">
+        </div>
+        <div class="photo-thumbs" id="thumb-${i}"></div>
+      </div>
+    `;
+    container.appendChild(d);
+  });
+}
+
+function switchGrad(i) {
+  grads.forEach((_,j) => {
+    document.getElementById('grad-panel-'+j).style.display = j===i?'':'none';
+  });
+  document.querySelectorAll('.grad-tab').forEach((el,j) => el.classList.toggle('active', j===i));
+  activeGrad = i;
+}
+
+function syncGrad(i) {
+  grads[i].name = document.getElementById('g'+i+'-name').value;
+  grads[i].year = document.getElementById('g'+i+'-year').value;
+  grads[i].school = document.getElementById('g'+i+'-school').value;
+  document.querySelectorAll('.grad-tab')[i].textContent = grads[i].name.split(' ')[0]||'Grad '+(i+1);
+  updateRsvpGradSelect();
+  update();
+}
+
+function handlePhoto(input) {
+  const i = +input.dataset.idx;
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    grads[i].photos = [e.target.result];
+    const thumb = document.getElementById('thumb-'+i);
+    thumb.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = e.target.result; img.className='thumb';
+    thumb.appendChild(img);
+    update();
+  };
+  reader.readAsDataURL(file);
+}
+
+function switchTab(t) {
+  ['invite','rsvp','style'].forEach(id => {
+    document.getElementById('tab-'+id).style.display = id===t?'':'none';
+  });
+  document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('active',['invite','rsvp','style'][i]===t));
+}
+
+function fmtDate(d){if(!d)return'';const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});}
+function fmtTime(t){if(!t)return'';const[h,m]=t.split(':');const hh=+h;return(hh%12||12)+':'+(m||'00')+' '+(hh<12?'AM':'PM');}
+
+function applyPreset(v) {
+  if (!presets[v]) return;
+  document.getElementById('col-bg').value=presets[v].bg;
+  document.getElementById('col-text').value=presets[v].text;
+  document.getElementById('col-body').value=presets[v].body;
+  update();
+}
+
+function update() {
+  const bg=document.getElementById('col-bg').value;
+  const text=document.getElementById('col-text').value;
+  const body=document.getElementById('col-body').value;
+  const card=document.getElementById('invite-inner');
+  card.parentElement.style.background=bg;
+  card.style.background=bg;
+  document.getElementById('prev-tagline').style.color=body;
+  document.getElementById('prev-names').style.color=text;
+  document.getElementById('prev-schools').style.color=body;
+  document.getElementById('prev-details').style.color=body;
+  document.getElementById('prev-msg').style.color=body;
+  document.getElementById('prev-rsvp-note').style.color=body;
+  document.getElementById('prev-divider').style.background=text;
+
+  const names = grads.map(g=>g.name||'Graduate').join(' · ');
+  document.getElementById('prev-names').textContent = names;
+  document.getElementById('prev-schools').innerHTML = grads.map(g=>g.school).filter(Boolean).join('<br>');
+
+  const date=fmtDate(document.getElementById('party-date').value);
+  const time=fmtTime(document.getElementById('party-time').value);
+  const venue=document.getElementById('party-venue').value;
+  const addr=document.getElementById('party-addr').value;
+  document.getElementById('prev-details').innerHTML=date+'<br>'+time+'<br>'+venue+'<br>'+addr;
+  document.getElementById('prev-msg').textContent=document.getElementById('party-msg').value;
+
+  const deadline=fmtDate(document.getElementById('rsvp-deadline').value);
+  const email=document.getElementById('rsvp-email').value;
+  document.getElementById('prev-rsvp-note').textContent=deadline?'RSVP by '+deadline+' · '+email:'';
+
+  const btn=document.getElementById('rsvp-btn');
+  btn.style.background=text; btn.style.color=bg;
+  document.getElementById('rc-yes').style.borderColor=text;
+  document.getElementById('rc-yes').style.color=text;
+
+  document.getElementById('rsvp-dietary-field').style.display=document.getElementById('rsvp-dietary').value==='yes'?'':'none';
+  document.getElementById('rsvp-guests-field').style.display=document.getElementById('rsvp-guests').value==='yes'?'':'none';
+  document.getElementById('rsvp-grad-field').style.display=document.getElementById('rsvp-grad-q').value==='yes'?'':'none';
+  const customQ=document.getElementById('rsvp-custom').value.trim();
+  document.getElementById('rsvp-custom-field').style.display=customQ?'':'none';
+  if(customQ) document.getElementById('rsvp-custom-label').textContent=customQ;
+
+  renderPhotos(text);
+}
+
+function renderPhotos(text) {
+  const layout=document.getElementById('photo-layout').value;
+  const container=document.getElementById('invite-photos');
+  container.innerHTML='';
+  const withPhotos=grads.filter(g=>g.photos.length>0);
+  if(withPhotos.length===0) return;
+  withPhotos.forEach(g=>{
+    const img=document.createElement('img');
+    img.src=g.photos[0];
+    if(layout==='circles'){img.style.cssText='width:62px;height:62px;border-radius:50%;object-fit:cover;border:2px solid '+text;}
+    else if(layout==='strip'){img.style.cssText='width:52px;height:78px;border-radius:6px;object-fit:cover;border:1.5px solid '+text;}
+    else{img.style.cssText='width:62px;height:62px;border-radius:6px;object-fit:cover;border:1.5px solid '+text;}
+    container.appendChild(img);
+  });
+}
+
+function updateRsvpGradSelect() {
+  const sel=document.getElementById('rsvp-grad-select');
+  sel.innerHTML=grads.map(g=>`<option>${g.name||'Graduate'}</option>`).join('');
+}
+
+function pickRsvp(v) {
+  const text=document.getElementById('col-text').value;
+  document.getElementById('rc-yes').style.cssText=v==='yes'?'border-color:'+text+';color:'+text+';font-weight:500':'';
+  document.getElementById('rc-no').style.cssText=v==='no'?'border-color:'+text+';color:'+text+';font-weight:500':'';
+}
+
+function submitRSVP(){showToast('✓ RSVP sent!');}
+function copyHTML(){navigator.clipboard.writeText(document.getElementById('invite-card').outerHTML).then(()=>showToast('✓ HTML copied!'));}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',2200);}
+
+buildGradPanels();
+updateRsvpGradSelect();
+update();
+</script>
