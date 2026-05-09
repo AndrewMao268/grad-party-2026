@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Graduation Celebration — Class of 2026</title>
+<title>Andrew, Hari, Nikolai, William Grad Party</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -187,10 +187,10 @@
       <h2>RSVP</h2>
       <p>Kindly respond by May 18, 2026</p>
     </div>
-    <div class="rsvp-form" id="rsvp-form">
+    <form class="rsvp-form" id="rsvp-form" action="https://formspree.io/f/mpqbyeej" method="POST">
       <div class="form-row">
-        <div class="form-field"><label>First name</label><input type="text" placeholder="Jane" id="f-first"></div>
-        <div class="form-field"><label>Last name</label><input type="text" placeholder="Smith" id="f-last"></div>
+        <div class="form-field"><label>First name</label><input type="text" placeholder="Jane" id="f-first" name="first_name" required></div>
+        <div class="form-field"><label>Last name</label><input type="text" placeholder="Smith" id="f-last" name="last_name" required></div>
       </div>
       <div class="form-field">
         <label>Will you be attending?</label>
@@ -198,19 +198,20 @@
           <button class="attend-btn active" id="btn-yes" onclick="setAttend('yes')">Yes, I'll be there!</button>
           <button class="attend-btn" id="btn-no" onclick="setAttend('no')">Sorry, can't make it</button>
         </div>
+        <input type="hidden" name="attending" id="h-attending" value="yes">
       </div>
       <div class="form-row">
         <div class="form-field"><label>Number of guests</label>
-          <select id="f-guests"><option>1 (just me)</option><option>2</option><option>3</option><option>4</option><option>5+</option></select>
+          <select id="f-guests" name="number_of_guests"><option>1 (just me)</option><option>2</option><option>3</option><option>4</option><option>5+</option></select>
         </div>
         <div class="form-field"><label>Closest to which grad?</label>
-          <select id="f-grad"><option>Andrew Mao</option><option>Hari Nadathur</option><option>Nikolai Sweeney</option><option>William Thompson</option><option>All of them!</option></select>
+          <select id="f-grad" name="closest_to"><option>Andrew Mao</option><option>Hari Nadathur</option><option>Nikolai Sweeney</option><option>William Thompson</option><option>All of them!</option></select>
         </div>
       </div>
-      <div class="form-field"><label>Dietary restrictions (optional)</label><input type="text" placeholder="e.g. vegetarian, gluten-free…" id="f-dietary"></div>
-      <div class="form-field"><label>Message for the graduates (optional)</label><textarea placeholder="Share a memory, words of wisdom, or congratulations…" id="f-msg"></textarea></div>
-      <button class="submit-btn" onclick="submitRSVP()">Send RSVP</button>
-    </div>
+      <div class="form-field"><label>Dietary restrictions (optional)</label><input type="text" placeholder="e.g. vegetarian, gluten-free…" id="f-dietary" name="dietary_restrictions"></div>
+      <div class="form-field"><label>Message for the graduates (optional)</label><textarea placeholder="Share a memory, words of wisdom, or congratulations…" id="f-msg" name="message"></textarea></div>
+      <button class="submit-btn" type="submit">Send RSVP</button>
+    </form>
     <div class="success-msg" id="success-msg">Thank you! We can't wait to celebrate with you. 🎓</div>
   </div>
 
@@ -218,8 +219,24 @@
 </div>
 <script>
   let attending='yes';
-  function setAttend(v){attending=v;document.getElementById('btn-yes').classList.toggle('active',v==='yes');document.getElementById('btn-no').classList.toggle('active',v==='no');}
-  function submitRSVP(){const f=document.getElementById('f-first').value.trim(),l=document.getElementById('f-last').value.trim();if(!f||!l){alert('Please enter your name.');return;}document.getElementById('rsvp-form').style.display='none';document.getElementById('success-msg').style.display='block';}
+  function setAttend(v){
+    attending=v;
+    document.getElementById('btn-yes').classList.toggle('active',v==='yes');
+    document.getElementById('btn-no').classList.toggle('active',v==='no');
+    document.getElementById('h-attending').value=v;
+  }
+  const form=document.getElementById('rsvp-form');
+  form.addEventListener('submit',async function(e){
+    e.preventDefault();
+    const data=new FormData(form);
+    const res=await fetch(form.action,{method:'POST',body:data,headers:{Accept:'application/json'}});
+    if(res.ok){
+      form.style.display='none';
+      document.getElementById('success-msg').style.display='block';
+    } else {
+      alert('Something went wrong. Please try again or email us directly.');
+    }
+  });
 </script>
 </body>
 </html>
