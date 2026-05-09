@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Graduation Celebration — Class of 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --forest: #1c3a1e;
+    --forest-mid: #2d5c30;
+    --forest-light: #3d7a41;
+    --gold: #c9973a;
+    --gold-light: #e8c278;
+    --gold-pale: #f5e9cc;
+    --cream: #faf6ed;
+    --parchment: #f0e8d0;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--forest);
+    color: var(--cream);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* decorative background pattern */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(201,151,58,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 80% 90%, rgba(61,122,65,0.15) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+
+  /* ── hero ── */
+  .hero { text-align: center; padding: 3rem 0 2.5rem; }
+
+  .hero-eyebrow {
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp .8s .1s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(42px, 9vw, 78px);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--gold-light);
+    letter-spacing: -.01em;
+    margin-bottom: .5rem;
+    opacity: 0;
+    animation: fadeUp .8s .25s forwards;
+  }
+
+  .hero-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(18px, 4vw, 26px);
+    color: var(--gold-pale);
+    opacity: 0;
+    animation: fadeUp .8s .4s forwards;
+    margin-bottom: 2rem;
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+    margin: 2rem 0;
+    opacity: 0;
+    animation: fadeUp .8s .5s forwards;
+  }
+  .divider-line { flex: 1; max-width: 80px; height: 1px; background: linear-gradient(to right, transparent, var(--gold)); }
+  .divider-line.right { background: linear-gradient(to left, transparent, var(--gold)); }
+  .divider-diamond { width: 8px; height: 8px; background: var(--gold); transform: rotate(45deg); }
+
+  /* ── names grid ── */
+  .names-section {
+    opacity: 0;
+    animation: fadeUp .8s .55s forwards;
+    margin-bottom: 3rem;
+  }
+
+  .names-label {
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+  }
+
+  .names-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    border: 1px solid rgba(201,151,58,0.25);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .grad-card {
+    background: rgba(255,255,255,0.03);
+    padding: 1.5rem 1.25rem;
+    text-align: center;
+    border: 1px solid rgba(201,151,58,0.12);
+    transition: background .3s;
+  }
+  .grad-card:hover { background: rgba(201,151,58,0.07); }
+
+  .grad-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--gold-light);
+    margin-bottom: 4px;
+  }
+
+  .grad-school {
+    font-size: 11px;
+    letter-spacing: .06em;
+    color: rgba(245,233,204,0.55);
+    text-transform: uppercase;
+  }
+
+  /* ── message ── */
+  .message-section {
+    text-align: center;
+    padding: 2.5rem 2rem;
+    border-top: 1px solid rgba(201,151,58,0.2);
+    border-bottom: 1px solid rgba(201,151,58,0.2);
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp .8s .7s forwards;
+  }
+
+  .message-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(17px, 3vw, 21px);
+    line-height: 1.75;
+    color: var(--gold-pale);
+  }
+
+  /* ── details ── */
+  .details-section {
+    opacity: 0;
+    animation: fadeUp .8s .8s forwards;
+    margin-bottom: 3rem;
+  }
+
+  .details-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: rgba(201,151,58,0.15);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .detail-block {
+    background: rgba(28,58,30,0.95);
+    padding: 1.5rem 1rem;
+    text-align: center;
+  }
+
+  .detail-icon {
+    font-size: 20px;
+    margin-bottom: .5rem;
+    display: block;
+  }
+
+  .detail-label {
+    font-size: 9px;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: .4rem;
+  }
+
+  .detail-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--cream);
+    line-height: 1.35;
+  }
+
+  .detail-sub {
+    font-size: 11px;
+    color: rgba(245,233,204,0.5);
+    margin-top: 3px;
+  }
+
+  /* ── RSVP ── */
+  .rsvp-section {
+    opacity: 0;
+    animation: fadeUp .8s .9s forwards;
+  }
+
+  .rsvp-header {
+    text-align: center;
+    margin-bottom: 1.75rem;
+  }
+
+  .rsvp-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--gold-light);
+    margin-bottom: .25rem;
+  }
+
+  .rsvp-header p {
+    font-size: 12px;
+    letter-spacing: .1em;
+    color: rgba(245,233,204,0.5);
+  }
+
+  .rsvp-form {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(201,151,58,0.2);
+    border-radius: 8px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  .form-field { display: flex; flex-direction: column; gap: 6px; }
+
+  .form-field label {
+    font-size: 10px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .form-field input,
+  .form-field select,
+  .form-field textarea {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(201,151,58,0.25);
+    border-radius: 4px;
+    padding: 10px 12px;
+    color: var(--cream);
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    outline: none;
+    transition: border-color .2s;
+    width: 100%;
+  }
+  .form-field input::placeholder,
+  .form-field textarea::placeholder { color: rgba(245,233,204,0.3); }
+  .form-field input:focus,
+  .form-field select:focus,
+  .form-field textarea:focus { border-color: var(--gold); }
+  .form-field select option { background: var(--forest); }
+  .form-field textarea { resize: vertical; min-height: 80px; }
+
+  .attend-buttons { display: flex; gap: 8px; }
+  .attend-btn {
+    flex: 1; padding: 10px; border-radius: 4px;
+    border: 1px solid rgba(201,151,58,0.3);
+    background: transparent; color: rgba(245,233,204,0.6);
+    font-family: 'Jost', sans-serif; font-size: 13px;
+    cursor: pointer; transition: all .2s; font-weight: 400;
+  }
+  .attend-btn.active {
+    background: var(--gold); color: var(--forest);
+    border-color: var(--gold); font-weight: 500;
+  }
+
+  .submit-btn {
+    width: 100%; padding: 14px;
+    background: var(--gold);
+    color: var(--forest);
+    border: none; border-radius: 4px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px; font-weight: 600;
+    letter-spacing: .05em;
+    cursor: pointer;
+    transition: background .2s, transform .15s;
+    margin-top: .25rem;
+  }
+  .submit-btn:hover { background: var(--gold-light); transform: translateY(-1px); }
+  .submit-btn:active { transform: translateY(0); }
+
+  .success-msg {
+    display: none;
+    text-align: center;
+    padding: 2rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--gold-light);
+  }
+
+  /* ── footer ── */
+  .footer {
+    text-align: center;
+    margin-top: 4rem;
+    font-size: 11px;
+    letter-spacing: .1em;
+    color: rgba(245,233,204,0.25);
+    opacity: 0;
+    animation: fadeUp .8s 1s forwards;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 520px) {
+    .names-grid { grid-template-columns: 1fr; }
+    .details-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .rsvp-form { padding: 1.25rem; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hero">
+    <p class="hero-eyebrow">You are cordially invited to celebrate</p>
+    <h1 class="hero-title">Graduation</h1>
+    <p class="hero-subtitle">Class of 2026</p>
+  </div>
+
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-diamond"></div>
+    <div class="divider-line right"></div>
+  </div>
+
+  <div class="names-section">
+    <p class="names-label">Honoring</p>
+    <div class="names-grid">
+      <div class="grad-card">
+        <p class="grad-name">Andrew Mao</p>
+        <p class="grad-school">Rice University</p>
+      </div>
+      <div class="grad-card">
+        <p class="grad-name">Hari Nadathur</p>
+        <p class="grad-school">Ohio State University</p>
+      </div>
+      <div class="grad-card">
+        <p class="grad-name">Nikolai Sweeney</p>
+        <p class="grad-school">Xavier University</p>
+      </div>
+      <div class="grad-card">
+        <p class="grad-name">William Thompson</p>
+        <p class="grad-school">Liberty University</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="message-section">
+    <p class="message-text">
+      Four paths, four schools, four dreams pursued — and now, four reasons to celebrate.
+      We are so proud of these incredible young men and everything they have accomplished.
+      Please join us for an afternoon of food, laughter, and well-deserved recognition
+      as we toast to the adventures that lie ahead.
+    </p>
+  </div>
+
+  <div class="details-section">
+    <div class="details-grid">
+      <div class="detail-block">
+        <span class="detail-icon">📅</span>
+        <p class="detail-label">Date</p>
+        <p class="detail-value">Sunday<br>May 25, 2026</p>
+      </div>
+      <div class="detail-block">
+        <span class="detail-icon">🕑</span>
+        <p class="detail-label">Time</p>
+        <p class="detail-value">2:00 – 6:00 PM</p>
+        <p class="detail-sub">Afternoon celebration</p>
+      </div>
+      <div class="detail-block">
+        <span class="detail-icon">📍</span>
+        <p class="detail-label">Location</p>
+        <p class="detail-value">Swaim Park</p>
+        <p class="detail-sub">Small Shelter<br>7650 Cooper Road</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="rsvp-section">
+    <div class="rsvp-header">
+      <h2>RSVP</h2>
+      <p>Kindly respond by May 18, 2026</p>
+    </div>
+
+    <div class="rsvp-form" id="rsvp-form">
+      <div class="form-row">
+        <div class="form-field">
+          <label>First name</label>
+          <input type="text" placeholder="Jane" id="f-first">
+        </div>
+        <div class="form-field">
+          <label>Last name</label>
+          <input type="text" placeholder="Smith" id="f-last">
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label>Will you be attending?</label>
+        <div class="attend-buttons">
+          <button class="attend-btn active" id="btn-yes" onclick="setAttend('yes')">Yes, I'll be there!</button>
+          <button class="attend-btn" id="btn-no" onclick="setAttend('no')">Sorry, can't make it</button>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label>Number of guests</label>
+          <select id="f-guests">
+            <option>1 (just me)</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5+</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Closest to which grad?</label>
+          <select id="f-grad">
+            <option>Andrew Mao</option>
+            <option>Hari Nadathur</option>
+            <option>Nikolai Sweeney</option>
+            <option>William Thompson</option>
+            <option>All of them!</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label>Dietary restrictions (optional)</label>
+        <input type="text" placeholder="e.g. vegetarian, gluten-free, nut allergy…" id="f-dietary">
+      </div>
+
+      <div class="form-field">
+        <label>Message for the graduates (optional)</label>
+        <textarea placeholder="Share a memory, words of wisdom, or congratulations…" id="f-msg"></textarea>
+      </div>
+
+      <button class="submit-btn" onclick="submitRSVP()">Send RSVP</button>
+    </div>
+
+    <div class="success-msg" id="success-msg">
+      Thank you! We can't wait to celebrate with you. 🎓
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Swaim Park · Small Shelter · 7650 Cooper Road · Cincinnati, OH</p>
+  </div>
+
+</div>
+
+<script>
+  let attending = 'yes';
+  function setAttend(v) {
+    attending = v;
+    document.getElementById('btn-yes').classList.toggle('active', v==='yes');
+    document.getElementById('btn-no').classList.toggle('active', v==='no');
+  }
+  function submitRSVP() {
+    const first = document.getElementById('f-first').value.trim();
+    const last = document.getElementById('f-last').value.trim();
+    if (!first || !last) { alert('Please enter your name.'); return; }
+    document.getElementById('rsvp-form').style.display = 'none';
+    document.getElementById('success-msg').style.display = 'block';
+  }
+</script>
+</body>
+</html>
